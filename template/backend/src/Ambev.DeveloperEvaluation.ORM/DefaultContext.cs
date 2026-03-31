@@ -9,6 +9,8 @@ namespace Ambev.DeveloperEvaluation.ORM;
 public class DefaultContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<Sale> Sale { get; set; }
+    public DbSet<SaleItem> SaleItem { get; set; }
 
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {
@@ -25,8 +27,9 @@ public class YourDbContextFactory : IDesignTimeDbContextFactory<DefaultContext>
     public DefaultContext CreateDbContext(string[] args)
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
+            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(),
+                "../Ambev.DeveloperEvaluation.WebApi"))
+            .AddJsonFile("appsettings.json", optional: false)
             .Build();
 
         var builder = new DbContextOptionsBuilder<DefaultContext>();
@@ -34,7 +37,7 @@ public class YourDbContextFactory : IDesignTimeDbContextFactory<DefaultContext>
 
         builder.UseNpgsql(
                connectionString,
-               b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.WebApi")
+               b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
         );
 
         return new DefaultContext(builder.Options);
