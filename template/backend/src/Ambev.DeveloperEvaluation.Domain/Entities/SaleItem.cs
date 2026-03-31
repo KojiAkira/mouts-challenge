@@ -26,7 +26,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
-        /// Gets the date and time of the last update to the user's information.
+        /// Gets the date and time of the last update to the sale's information.
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
         #endregion
@@ -37,9 +37,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         }
 
         #region Methods
+        /// <summary>
+        /// Calculate Limit of same item in Sale.
+        /// </summary>
         internal SaleItem(Guid saleId, Guid productId, string productName, int quantity, decimal unitPrice)
         {
-            // Regra de Negócio: Limite máximo
             if (quantity > 20)
                 throw new ArgumentException("Não é possível vender mais de 20 itens idênticos.");
             if (quantity <= 0)
@@ -56,11 +58,13 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             CalculateDiscountsAndTotal();
         }
 
+        /// <summary>
+        /// Calculate Discounts And Total of Sale.
+        /// </summary>
         private void CalculateDiscountsAndTotal()
         {
             decimal discountPercentage = 0m;
 
-            // Regras de Negócio: Tiers de Desconto
             if (Quantity >= 4 && Quantity < 10)
                 discountPercentage = 0.10m; // 10%
             else if (Quantity >= 10 && Quantity <= 20)
@@ -70,9 +74,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             Discount = rawTotal * discountPercentage;
             TotalAmount = rawTotal - Discount;
         }
+
         /// <summary>
         /// Activates the user account.
-        /// Changes the user's status to Active.
+        /// Changes the sale status to Active.
         /// </summary>
         public void Activate()
         {
@@ -81,8 +86,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         }
 
         /// <summary>
-        /// Deactivates the user account.
-        /// Changes the user's status to Inactive.
+        /// Deactivates the sale account.
+        /// Changes the sale status to Inactive.
         /// </summary>
         public void Deactivate()
         {
@@ -91,8 +96,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         }
 
         /// <summary>
-        /// Blocks the user account.
-        /// Changes the user's status to Blocked.
+        /// Blocks the sale.
+        /// Changes the sale status to Blocked.
         /// </summary>
         public void Suspend()
         {

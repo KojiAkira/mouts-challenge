@@ -45,6 +45,9 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             BranchId = branchId;
             Status = Status.Active;
         }
+        /// <summary>
+        /// Add Item in Sale.
+        /// </summary>
         public void AddItem(Guid productId, string productName, int quantity, decimal unitPrice)
         {
             if (Status != Status.Active)
@@ -56,8 +59,25 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         }
 
         /// <summary>
-        /// Activates the user account.
-        /// Changes the user's status to Active.
+        /// Recalculate Total Amount in Sale.
+        /// </summary>
+        private void RecalculateTotalAmount()
+        {
+            TotalAmount = _items.Where(i => i.Status == Status.Active).Sum(i => i.TotalAmount);
+        }
+
+        /// <summary>
+        /// Clear items in Sale and recalculate Total Amount
+        /// </summary>
+        public void ClearItems()
+        {
+            _items.Clear();
+            RecalculateTotalAmount();
+        }
+
+        /// <summary>
+        /// Activates the sale .
+        /// Changes the sale status to Active.
         /// </summary>
         public void Activate()
         {
@@ -66,8 +86,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         }
 
         /// <summary>
-        /// Deactivates the user account.
-        /// Changes the user's status to Inactive.
+        /// Deactivates the sale.
+        /// Changes the sale status to Inactive.
         /// </summary>
         public void Deactivate()
         {
@@ -80,8 +100,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         }
 
         /// <summary>
-        /// Blocks the user account.
-        /// Changes the user's status to Blocked.
+        /// Blocks the sale.
+        /// Changes the sale status to Blocked.
         /// </summary>
         public void Suspend()
         {
@@ -91,10 +111,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
             {
                 item.Suspend();
             }
-        }
-        private void RecalculateTotalAmount() 
-        { 
-            TotalAmount = _items.Where(i => i.Status == Status.Active).Sum(i => i.TotalAmount);
         }
         #endregion
     }
